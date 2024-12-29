@@ -139,7 +139,13 @@ function M._setup_auto_commands()
             callback = function(event)
                 -- TODO: instead of rendering the entire buffer
                 -- should probably render only the visible expressions in that buffer
-                M.render_buf(event.buf)
+                if config.render.on_write == "render" then
+                    M.render_buf(event.buf)
+                elseif config.render.on_write=="rerender" then
+                    M.rerender_buf(event.buf)
+                else
+                    error("invalid option " .. config.render.on_write .. " passed to config.render.on_write")
+                end
             end,
         })
     end
