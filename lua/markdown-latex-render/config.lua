@@ -1,7 +1,8 @@
 local utils = require("markdown-latex-render.utils")
 
 --- @class  markdown-latex-render.Config
---- @field img_dir? string if you want generated images to be stored somewhere other than the default location in /tmp
+--- @field img_dir? string if you want generated images to be stored somewhere other than the default location in /tmp/markdown-latex-render
+--- @field log_level? "DEBUG" | "INFO" | "WARN" | "ERROR" log level
 --- @field render? markdown-latex-render.ConfigRender if you want generated images to be stored somewhere other than the default location in /tmp
 
 --- @class markdown-latex-render.ConfigRender
@@ -13,10 +14,10 @@ local utils = require("markdown-latex-render.utils")
 
 --- @type markdown-latex-render.Config
 local config = {
-    img_dir = vim.fn.stdpath("run") .. "/markdown-latex-render",
+    img_dir = "/tmp/markdown-latex-render",
+    log_level = "WARN",
     render = {
         on_write = true,
-        -- display_error = false,
         fg = utils.get_fg(),
         bg = nil,
         transparent = true,

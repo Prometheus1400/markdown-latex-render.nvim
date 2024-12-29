@@ -1,11 +1,3 @@
---- @class TSQueryResults
---- @field pos TSQueryResultsPos
---- @field latex string
----
---- @class TSQueryResultsPos
---- @field r_start integer
---- @field r_end integer
-
 local ts = vim.treesitter
 
 -- Define the query string

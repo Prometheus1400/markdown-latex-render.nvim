@@ -8,6 +8,10 @@
 
 - [x] figure out how to render multiline equations, matplotlib only works for one line currently
 
+- [x] remove rendered images from blocks that got deleted (possibly pretty inefficient)
+
+- [ ] need to revise the key strategy as duplicate blocks in the code can be the same expression but should be rendered seperately
+
 - [ ] be able to only render when hovering over latex
 
 - [ ] be able to possibly hide the raw latex expression

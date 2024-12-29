@@ -1,15 +1,12 @@
+local logger = require("markdown-latex-render.logger")
 local job = require("plenary.job")
 local config = require("markdown-latex-render.config")
 
 M = {}
 
---- @class GenerateImageOpts
---- @field img_dir? string
---- @field sync? boolean
-
---- @param latex string
---- @param image_name string
---- @param callback function | nil
+--- @param latex string latex string to convert to image
+--- @param image_name string name of generated image
+--- @param callback fun(code: integer, img_path: string)
 --- @param opts GenerateImageOpts
 M._generate_image = function(latex, image_name, callback, opts)
     local img_dir = opts.img_dir or config.img_dir

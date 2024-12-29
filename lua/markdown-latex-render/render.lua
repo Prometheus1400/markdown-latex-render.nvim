@@ -1,7 +1,7 @@
-    local img_api = require("image")
+local image_api = require("markdown-latex-render.image_api")
 local query = require("markdown-latex-render.query")
 local image_generator = require("markdown-latex-render.image-generator")
-local images = require("markdown-latex-render.images")
+local image_cache = require("markdown-latex-render.image_cache")
 
 M = {}
 
@@ -10,9 +10,9 @@ M = {}
 --- @param key string
 --- @param img_path string
 --- @param row integer
---- @param old_image? Image
+--- @param old_image? markdown-latex-render.ImageInterface
 local render_img = function(buf, win, key, img_path, row, old_image)
-    local image = img_api.from_file(img_path, {
+    local image = image_api.from_file(img_path, {
         id = key,
         window = win,
         buffer = buf,
@@ -31,10 +31,9 @@ local render_img = function(buf, win, key, img_path, row, old_image)
     else
         image:render()
         if old_image then
-            print("unrendering old image " .. old_image.id)
-            images._clear_registered_image(buf, old_image.id)
+            image_cache._clear_registered_image(buf, old_image.id)
         end
-        images.register_image(buf, key, image)
+        image_cache.register_image(buf, key, image)
     end
 end
 M.render = render_img
@@ -44,26 +43,21 @@ M.render = render_img
 --- @param win integer
 --- @param results TSQueryResults[]
 local handle_latex_query_results = function(buf, win, results)
-    for _, result in ipairs(results) do
+    for i, result in ipairs(results) do
         local latex = result.latex
-        local key = latex:gsub("%s+", "")
-        local name = key .. "-" .. buf .. ".png"
+        local key = latex:gsub("%s+", "") .. "-" .. buf .. "-" .. i
+        local name = key .. ".png"
         local row = result.pos.r_end
 
         -- if image with key already generated then don't need to rerender
         -- key comes from the latex so if it doesn't semantically change it
         -- will be the same
-        if images._image_already_rendered(buf, key) then
+        if image_cache._image_already_rendered(buf, key) then
             goto continue
         end
 
         -- get the old image we need to unrender
-        local old_image = images._get_image_at_location(buf, row)
-        -- if not old_image then
-        --     print("no old image found")
-        -- else
-        --     print("image found")
-        -- end
+        local old_image = image_cache._get_image_at_location(buf, row)
         image_generator._generate_image(latex, name, function(code, img_path)
             if code == 0 then
                 print("trying to load image!")
@@ -83,6 +77,8 @@ local render_buf = function(buf, win)
     win = win or vim.api.nvim_get_current_win()
 
     local results = query._query_latex_in_buf(buf)
+    -- go through all the results and delete any images that are no longer applicable
+    image_cache._delete_unused_by_location(buf, results)
     handle_latex_query_results(buf, win, results)
 end
 M.render_buf = render_buf
@@ -102,12 +98,14 @@ M.render_at_cursor = render_at_cursor
 local rerender_buf = function(buf)
     buf = buf or vim.api.nvim_get_current_buf()
 
-    images._rerender_images_in_buf(buf)
+    image_cache._rerender_images_in_buf(buf)
 end
 M.rerender_buf = rerender_buf
 
 
 M._setup_autocommands = function()
+    -- VimEnter and BufNew together cover the events for a markdown file getting loaded for the first time
+    -- need to defer execution of 'render_buf' here to give treesitter time to parse the file
     vim.api.nvim_create_autocmd("VimEnter", {
         group = vim.api.nvim_create_augroup("MarkdownLatexRenderVimEnter", { clear = true }),
         pattern = "*.md",
@@ -117,8 +115,6 @@ M._setup_autocommands = function()
             end, 100)
         end,
     })
-    -- TODO: figure out how to render once on opening buffer for the first time
-    -- the challenge is it needs to run only after Treesitter has parsed
     vim.api.nvim_create_autocmd("BufNew", {
         group = vim.api.nvim_create_augroup("MarkdownLatexRenderBufNew", { clear = true }),
         pattern = "*.md",
@@ -132,6 +128,8 @@ M._setup_autocommands = function()
         group = vim.api.nvim_create_augroup("MarkdownLatexRenderBufWritePost", { clear = true }),
         pattern = "*.md",
         callback = function()
+            -- TODO: instead of rendering the entire buffer
+            -- should probably render only the visible expressions in that buffer
             render_buf()
         end,
     })
@@ -170,7 +168,7 @@ M._setup_autocommands = function()
         group = vim.api.nvim_create_augroup("MarkdownLatexRenderBufUnload", { clear = true }),
         pattern = "*.md",
         callback = function(event)
-            images._clear_registered_images(event.buf)
+            image_cache._clear_registered_images(event.buf)
         end,
     })
 end

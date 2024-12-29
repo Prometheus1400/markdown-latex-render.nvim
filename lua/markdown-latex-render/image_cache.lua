@@ -1,17 +1,15 @@
-require("image")
-
 M = {}
 
 -- TODO: the key being the latex is not good enough because the same latex expressions can be used multiple
 -- times throughout the same buffer
 
 --- map of buffer to image list
---- @type table<integer, table<string, Image>>
+--- @type table<integer, table<string, markdown-latex-render.ImageInterface>>
 local buf_images = {}
 
 --- @param buf integer
 --- @param key string
---- @param image Image
+--- @param image markdown-latex-render.ImageInterface
 M.register_image = function(buf, key, image)
     if not buf_images[buf] then
         buf_images[buf] = {}
@@ -24,7 +22,7 @@ M.register_image = function(buf, key, image)
 end
 
 --- @param buf integer
---- @return Image[]
+--- @return markdown-latex-render.ImageInterface[]
 M.get_registered_images = function(buf)
     local images = buf_images[buf]
     if not images then
@@ -55,7 +53,7 @@ end
 
 --- @param buf integer
 --- @param y integer
---- @return Image | nil
+--- @return markdown-latex-render.ImageInterface | nil
 M._get_image_at_location = function(buf, y)
     if not buf_images[buf] then
         return nil
