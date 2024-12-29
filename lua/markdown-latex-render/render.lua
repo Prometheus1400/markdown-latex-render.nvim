@@ -1,6 +1,6 @@
 local image_api = require("markdown-latex-render.image_api")
 local query = require("markdown-latex-render.query")
-local image_generator = require("markdown-latex-render.image-generator")
+local image_generator = require("markdown-latex-render.image_generator")
 local image_cache = require("markdown-latex-render.image_cache")
 local config = require("markdown-latex-render.config")
 

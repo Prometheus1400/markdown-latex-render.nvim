@@ -49,7 +49,12 @@ def main():
     output_path:Path = args.o
     fg, bg = args.fg, args.bg
     width:int = args.w
-    latex_lines = [f"${latex_line}$" for latex_line in latex.splitlines() ]
+    latex_lines = []
+    for line in latex.splitlines():
+        if line.endswith("\\\\"):
+            latex_lines.append(f"${line[:-2].strip()}$")
+        else:
+            latex_lines.append(f"${line}$")
 
     if not try_generate_image(latex_lines, str(output_path), fg=fg, bg=bg, transparent=args.t, width=width):
         print(f"could not generate image from latex: {latex}")

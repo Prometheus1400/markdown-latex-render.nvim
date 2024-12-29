@@ -18,7 +18,7 @@ M._generate_image = function(latex, image_name, callback, opts)
         "-o",
         img_dir .. "/" .. image_name,
     }
-    if config.render.bg then
+    if config.render.appearance.bg then
         table.insert(args, "-bg")
         table.insert(args, config.render.appearance.bg)
     end
@@ -37,10 +37,10 @@ M._generate_image = function(latex, image_name, callback, opts)
         command = "python3",
         args = args,
         on_stdout = function(_, line)
-            logger.debug(line)
+            logger.debug("python script sdout {" .. line .. "}")
         end,
         on_stderr = function(_, line)
-            logger.error(line)
+            logger.error("python script sderr {" .. line .. "}")
         end,
         on_exit = function(_, code)
             if callback then

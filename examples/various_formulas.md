@@ -13,7 +13,8 @@ a + ar + ar^2 + ar^3 + \cdots
 $$
 can be expressed as
 $$
-\sum_{k=0}^{\infty}ar^k
+\sum_{k=0}^{\infty}ar^k \\
+x=9
 $$
 
 $$
