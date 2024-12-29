@@ -34,4 +34,17 @@ describe("markdown-latex-render.image-generator", function()
             teardown()
         end, { image_dir = test_dir, sync = true })
     end)
+    it("should be able to generate an image from multiline latex string", function()
+        setup()
+
+        local latex = "\\log_2(x)\nx=2"
+        local image_name = "test2.png"
+        image_generator._generate_image(latex, image_name, function(code, img_path)
+            eq(code, 0)
+            local stat = vim.loop.fs_stat(img_path)
+            assert.not_nil(stat)
+            eq(stat.type, "file")
+            teardown()
+        end, { image_dir = test_dir, sync = true })
+    end)
 end)

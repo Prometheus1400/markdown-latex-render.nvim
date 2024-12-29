@@ -1,16 +1,22 @@
-M = {}
-
--- TODO: the key being the latex is not good enough because the same latex expressions can be used multiple
--- times throughout the same buffer
+local M = {}
 
 --- map of buffer to image list
 --- @type table<integer, table<string, markdown-latex-render.ImageInterface>>
 local buf_images = {}
 
+
+--- @param buf integer
+--- @return table<string, markdown-latex-render.ImageInterface>>
+local get_image_table_for_buf = function(buf)
+    local images = buf_images[buf]
+    if not images then return {} end
+    return images
+end
+
 --- @param buf integer
 --- @param key string
 --- @param image markdown-latex-render.ImageInterface
-M.register_image = function(buf, key, image)
+function M.register_image(buf, key, image)
     if not buf_images[buf] then
         buf_images[buf] = {}
     end
@@ -23,19 +29,19 @@ end
 
 --- @param buf integer
 --- @return markdown-latex-render.ImageInterface[]
-M.get_registered_images = function(buf)
-    local images = buf_images[buf]
-    if not images then
-        return {}
+function M.get_registered_images(buf)
+    local image_table = get_image_table_for_buf(buf)
+    local result = {}
+    for _, image in pairs(image_table) do
+        table.insert(result, image)
     end
-    return buf_images[buf]
+    return result
 end
 
 --- @param buf integer
-M._rerender_images_in_buf = function(buf)
-    local images = buf_images[buf]
-    if not images then return end
-    for _, image in pairs(images) do
+function M._rerender_images_in_buf(buf)
+    local image_table = get_image_table_for_buf(buf)
+    for _, image in pairs(image_table) do
         image:clear()
         image:render()
     end
@@ -44,7 +50,7 @@ end
 --- @param buf integer
 --- @param key string
 --- @return boolean
-M._image_already_rendered = function(buf, key)
+function M._image_already_registered(buf, key)
     if buf_images[buf] == nil or buf_images[buf][key] == nil then
         return false
     end
@@ -53,46 +59,50 @@ end
 
 --- @param buf integer
 --- @param y integer
---- @return markdown-latex-render.ImageInterface | nil
-M._get_image_at_location = function(buf, y)
-    if not buf_images[buf] then
-        return nil
-    end
-    for _, image in pairs(buf_images[buf]) do
+--- @return markdown-latex-render.ImageInterface[]
+function M._get_images_at_location(buf, y)
+    local image_table = get_image_table_for_buf(buf)
+    --- @type markdown-latex-render.ImageInterface[]
+    local results = {}
+    for _, image in pairs(image_table) do
         if image.geometry.y == y then
-            return image
+            table.insert(results, image)
         end
     end
-    return nil
+    return results
 end
 
 --- @param buf integer
 --- @param key string
-local _clear_registered_image = function(buf, key)
-    local image = buf_images[buf][key]
+--- @param delay? integer
+function M._clear_registered_image(buf, key, delay)
+    delay = delay or 50
+    local image_table = get_image_table_for_buf(buf)
+    assert(image_table[key], "trying to clear image " .. key .. " that is not registered")
+
+    local image = image_table[key]
     if image ~= nil then
-        image:clear()
-        vim.fn.delete(image.path)
+        vim.defer_fn(function()
+            image:clear()
+            vim.fn.delete(image.path)
+        end, delay)
         buf_images[buf][key] = nil
     end
 end
-M._clear_registered_image = _clear_registered_image
 
 --- @param buf integer
-M._clear_registered_images = function(buf)
-    local images = buf_images[buf]
-    if not images then
-        return
+function M._clear_registered_images(buf)
+    local image_table = get_image_table_for_buf(buf)
+    for key, _ in pairs(image_table) do
+        M._clear_registered_image(buf, key)
     end
-    for key, _ in pairs(images) do
-        _clear_registered_image(buf, key)
-    end
-    buf_images[buf] = {}
+    buf_images[buf] = nil
 end
 
 --- @param buf integer
 --- @param results TSQueryResults[]
-M._delete_unused_by_location = function(buf, results)
+-- TODO: should not know about TSQueryResults here
+function M._delete_unused_by_location(buf, results)
     if not buf_images[buf] then
         return
     end
@@ -105,8 +115,15 @@ M._delete_unused_by_location = function(buf, results)
             end
         end
         if not used then
-            _clear_registered_image(buf, key)
+            M._clear_registered_image(buf, key)
         end
+    end
+end
+
+--- clears everything
+function M._clear()
+    for buf, _ in pairs(buf_images) do
+        M._clear_registered_images(buf)
     end
 end
 

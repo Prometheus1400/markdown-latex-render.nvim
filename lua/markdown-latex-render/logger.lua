@@ -47,3 +47,5 @@ end
 function Logger.error(msg)
     Logger.log("ERROR", msg)
 end
+
+return Logger

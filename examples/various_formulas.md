@@ -1,18 +1,21 @@
 # Example For Rendering Latex Block Equations
 
 This is sequential summation formula
+
 $$
 \sum_{i=1}^{n}x_i=x_1+x_2 + \cdots + x_n
 $$
 
+and a geometric sequence such as 
+
 $$
-x = 3
+a + ar + ar^2 + ar^3 + \cdots
+$$
+can be expressed as
+$$
+\sum_{k=0}^{\infty}ar^k
 $$
 
 $$
-\sqrt{\log(x)}
-$$
-
-$$
-x = 3
+x = 9
 $$

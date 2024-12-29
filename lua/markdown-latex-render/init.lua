@@ -20,7 +20,8 @@ M.setup = function(opts)
         end
     end
 
-    render._setup_autocommands()
+    render._setup_auto_commands()
+    render._setup_user_commands()
 end
 
 return M

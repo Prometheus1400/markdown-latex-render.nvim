@@ -7,7 +7,7 @@
 --- @field render fun(self: markdown-latex-render.ImageInterface, geometry?: ImageGeometry)
 --- @field id string
 --- @field path string
---- @field geometry ImageGeometry
+--- @field geometry markdown-latex-render.ImageGeometry
 --- @field clear fun(self: markdown-latex-render.ImageInterface, shallow?: boolean)
 --- @class markdown-latex-render.ImageGeometry
 --- @field x integer
@@ -26,3 +26,4 @@
 --- @class GenerateImageOpts
 --- @field img_dir? string path to directory where generated images are placed
 --- @field sync? boolean execute synchronously or asynchronously
+--- @field width? integer width of generated image in inches

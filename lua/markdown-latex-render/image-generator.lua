@@ -2,7 +2,7 @@ local logger = require("markdown-latex-render.logger")
 local job = require("plenary.job")
 local config = require("markdown-latex-render.config")
 
-M = {}
+local M = {}
 
 --- @param latex string latex string to convert to image
 --- @param image_name string name of generated image
@@ -20,23 +20,27 @@ M._generate_image = function(latex, image_name, callback, opts)
     }
     if config.render.bg then
         table.insert(args, "-bg")
-        table.insert(args, config.render.bg)
+        table.insert(args, config.render.appearance.bg)
     end
-    if config.render.fg then
+    if config.render.appearance.fg then
         table.insert(args, "-fg")
-        table.insert(args, config.render.fg)
+        table.insert(args, config.render.appearance.fg)
     end
-    if config.render.transparent then
+    if config.render.appearance.transparent then
         table.insert(args, "-t")
+    end
+    if opts.width then
+        table.insert(args, "-w")
+        table.insert(args, opts.width)
     end
     local newjob = job:new({
         command = "python3",
         args = args,
         on_stdout = function(_, line)
-            print(line)
+            logger.debug(line)
         end,
         on_stderr = function(_, line)
-            print(line)
+            logger.error(line)
         end,
         on_exit = function(_, code)
             if callback then

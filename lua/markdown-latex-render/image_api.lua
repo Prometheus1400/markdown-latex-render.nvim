@@ -1,6 +1,6 @@
 --- @type markdown-latex-render.ImageApiInterface
 --- @diagnostic disable-next-line
-M = {}
+local M = {}
 
 --- @type markdown-latex-render.ImageApiInterface
 --- @diagnostic disable-next-line
