@@ -1,12 +1,12 @@
 import argparse
 import re
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 from pathlib import Path
 
-matplotlib.rcParams["mathtext.fontset"] = "cm"  # Font changed to Computer Modern
+plt.rcParams["mathtext.fontset"] = "cm"  # Font changed to Computer Modern
+plt.rcParams["font.weight"] = "bold"
 
 
 def is_output_png(path: str) -> bool:
@@ -25,7 +25,7 @@ def try_generate_image(latex_lines: list[str], path: str, fg: str | None = None,
             s="\n".join(latex_lines),
             horizontalalignment="center",
             verticalalignment="center",
-            fontsize=13,
+            fontsize=14,
             color=fg
         )
         plt.savefig(path, format="png", transparent=transparent)

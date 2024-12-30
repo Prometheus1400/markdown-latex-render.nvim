@@ -1,17 +1,10 @@
 # Example For Rendering Latex Block Equations
 
 This is sequential summation formula
-
 $$
-\sum_{i=1}^{n}x_i=x_1+x_2 + \cdots + x_n
+\sum_{i=1}^{n}x_i=\frac{n(n+1)}{2}
 $$
-
-and a geometric sequence such as 
-
+and the geometric summation formula
 $$
-a + ar + ar^2 + ar^3 + \cdots
-$$
-can be expressed as
-$$
-\sum_{k=0}^{\infty}ar^k \\
+\sum_{k=0}^{\infty}ar^k=a\frac{1-r^n}{1-r}
 $$

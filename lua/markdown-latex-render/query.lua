@@ -103,11 +103,9 @@ end
 --- @param win integer
 --- @return boolean
 M._in_latex_section = function(buf, win)
-    print("in_latex_section")
     buf = buf or 0
     local ok, parser = pcall(get_latex_parser, buf)
     if not ok then
-        print("false")
         return false
     end
 
@@ -115,10 +113,8 @@ M._in_latex_section = function(buf, win)
     local row, col = cursor_pos[1], cursor_pos[2]
     local tree = parser:tree_for_range({ row, col, row, col })
     if not tree then
-        print("false")
         return false
     end
-    print("true")
     return true
 end
 

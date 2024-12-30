@@ -1,3 +1,4 @@
+local logger = require("markdown-latex-render.logger")
 local image_api = require("markdown-latex-render.image_api")
 local query = require("markdown-latex-render.query")
 local image_generator = require("markdown-latex-render.image_generator")
@@ -21,7 +22,7 @@ function M._render_img(buf, win, key, img_path, row, old_images)
         y = row,
     })
     if not image then
-        print("failed to render image " .. img_path)
+        logger.error("failed to render image " .. key .. " from " .. img_path)
     else
         image:render()
         if old_images then
@@ -58,7 +59,7 @@ local handle_latex_query_results = function(buf, win, results)
         local old_images = image_cache._get_images_at_location(buf, row)
         image_generator._generate_image(latex, name, function(code, img_path)
             if code == 0 then
-                print("trying to load image!")
+                logger.debug("trying to render image for key " .. key .. " at path " .. img_path)
                 vim.schedule(function()
                     M._render_img(buf, win, key, img_path, row, old_images)
                 end)
