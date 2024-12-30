@@ -1,5 +1,3 @@
-local utils = require("markdown-latex-render.utils")
-
 --- @class  markdown-latex-render.Config
 --- @field img_dir? string if you want generated images to be stored somewhere other than the default location in /tmp/markdown-latex-render
 --- @field log_level? "DEBUG" | "INFO" | "WARN" | "ERROR" log level
@@ -19,17 +17,23 @@ local utils = require("markdown-latex-render.utils")
 
 --- @type markdown-latex-render.Config
 local config = {
+    -- directory where the temporary generated images will be stored
     img_dir = "/tmp/markdown-latex-render",
+    -- level for the logger, log file generated in vim log stdpath
     log_level = "WARN",
     render = {
         appearance = {
-            fg = utils.get_fg(),
+            -- will pick your normal fg text color can be any hex string color though
+            fg = "default",
             bg = nil,
             transparent = true,
+            -- a bit janky but I need some way of getting the width of the window in some real unit not just columns (image generated with this width)
             columns_per_inch = 18,
         },
+        -- when first opening the buffer if the latex should get rendered automatically
         on_open = true,
-        on_write = 'render',
+        -- if you want to trigger some render functionality on write you can supply 'render' or 'rerender' here
+        on_write = nil,
     },
 }
 
@@ -38,7 +42,7 @@ local M = {}
 
 ---@diagnostic disable-next-line: inject-field
 function M.merge_with(user_config)
-    config = vim.tbl_deep_extend('force', config, user_config)
+    config = vim.tbl_deep_extend("force", config, user_config)
 end
 
 return setmetatable(M, {

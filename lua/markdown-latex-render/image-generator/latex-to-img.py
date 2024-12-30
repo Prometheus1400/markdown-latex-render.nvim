@@ -40,8 +40,8 @@ def main():
     parser.add_argument("-o", type=Path, help="output path/name of generated image", required=True)
     parser.add_argument("-bg", type=str, help="hex background color", required=False)
     parser.add_argument("-fg", type=str, help="hex foreground color", required=False)
-    parser.add_argument('-t', action='store_true', help='enable transparency', required=False)
-    parser.add_argument('-w', type=int, help='width of image to generate in inches', required=False, default=4)
+    parser.add_argument("-t", action="store_true", help="enable transparency", required=False)
+    parser.add_argument("-w", type=int, help="width of image to generate in inches", required=False, default=4)
 
     args = parser.parse_args()
 

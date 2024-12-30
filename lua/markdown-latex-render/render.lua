@@ -206,7 +206,7 @@ function M._setup_user_commands()
     end, {
         nargs = 1,
         complete = function()
-            return { 'render', 'rerender', 'unrender' }
+            return { "render", "rerender", "unrender" }
         end,
         desc =
         "render (detect changes and rerender updated expressions), rerender (forcably unrender then render), unrender (stop displaying anything)"

@@ -1,3 +1,4 @@
+local utils = require("markdown-latex-render.utils")
 local logger = require("markdown-latex-render.logger")
 local job = require("plenary.job")
 local config = require("markdown-latex-render.config")
@@ -10,7 +11,7 @@ local M = {}
 --- @param opts GenerateImageOpts
 M._generate_image = function(latex, image_name, callback, opts)
     local img_dir = opts.img_dir or config.img_dir
-    local cur_file_dir = debug.getinfo(1).source:match('@?(.*/)')
+    local cur_file_dir = debug.getinfo(1).source:match("@?(.*/)")
     local py_script_path = cur_file_dir .. "/image-generator/latex-to-img.py"
     local args = {
         py_script_path,
@@ -24,7 +25,11 @@ M._generate_image = function(latex, image_name, callback, opts)
     end
     if config.render.appearance.fg then
         table.insert(args, "-fg")
-        table.insert(args, config.render.appearance.fg)
+        if config.render.appearance.fg == "default" then
+            table.insert(args, utils.get_fg())
+        else
+            table.insert(args, config.render.appearance.fg)
+        end
     end
     if config.render.appearance.transparent then
         table.insert(args, "-t")
