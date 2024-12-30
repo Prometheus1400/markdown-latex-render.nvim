@@ -14,9 +14,4 @@ $$
 can be expressed as
 $$
 \sum_{k=0}^{\infty}ar^k \\
-x=9
-$$
-
-$$
-x = 9
 $$
