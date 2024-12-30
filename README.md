@@ -1,5 +1,11 @@
 # Latex Rendering in Markdown Files (markdown-latex-render.nvim)
 
+
+
+https://github.com/user-attachments/assets/f206ffe7-852c-4e91-9e85-c472ab8a42ba
+
+
+
 ### Features
 Render block latex equations in markdown files by generating a png and displaying using [image.nvim](https://github.com/3rd/image.nvim). Support for automatic rendering when buffer is opened as well as rerendering on write. I intentionally wanted to minimize dependencies such as needing a full blown latex toolchain, and to this end I decided to use `matplotlib.pyplot`. This means that it only supports a *subset* of latex meaning super simple equations without support for `\begin{align}` and the like only math. This is all the functionality that *I* need but if there are requests for full latex support I will look into that as well. 
 
