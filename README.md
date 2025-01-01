@@ -61,3 +61,9 @@ local config = {
 ```
 
 </details>
+
+### TODO
+- [ ] make work with Latex distributions (fully featured)
+- [ ] live render preview popup when writing Latex
+- [ ] hide source Latex and display the image in its place not below
+- [ ] automatically rerender on window resize event
