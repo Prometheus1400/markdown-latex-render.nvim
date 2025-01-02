@@ -18,7 +18,6 @@ It's been a couple of years since I graduated from university and in that time I
 ## Getting Started
 ### Dependencies
 - Treesitter parsers: `markdown`, `markdown_inline`, and `latex`
-- Currently it is required that you have the matplotlib package installed for python globally on your system. You can check by running `pip3 list | grep matplotlib`. On linux you should be able to install using `pip3` and on mac you can install using `brew`.
 - This plugin also depends on the amazing [image.nvim](https://github.com/3rd/image.nvim) that really handles all of the heavy lifting.
 - Your terminal must support Kitty graphics protocol. I recommend that you use Kitty or Ghostty. Wezterm also implements the protocol but in my experience the performance is worse and it suffers more from display issues.
 
