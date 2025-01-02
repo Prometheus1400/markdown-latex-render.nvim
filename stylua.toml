@@ -1,0 +1,8 @@
+indent_width = 2
+column_width = 120
+quote_style = "ForceDouble"
+indent_type = "Spaces"
+call_parentheses = "Always"
+
+[sort_requires]
+enabled = true

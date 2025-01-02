@@ -13,7 +13,6 @@
 --- @field x integer
 --- @field y integer
 
-
 --- @class TSQueryResults
 --- @field pos TSQueryResultsPos
 --- @field latex string
@@ -21,7 +20,6 @@
 --- @class TSQueryResultsPos
 --- @field r_start integer row location where the query result starts
 --- @field r_end integer row location where the query result stops
-
 
 --- @class GenerateImageOpts
 --- @field img_dir? string path to directory where generated images are placed

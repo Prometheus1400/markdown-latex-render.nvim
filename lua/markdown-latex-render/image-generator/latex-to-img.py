@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 
+# plt.rcParams['text.usetex'] = True
 plt.rcParams["mathtext.fontset"] = "cm"  # Font changed to Computer Modern
 plt.rcParams["font.weight"] = "bold"
 
