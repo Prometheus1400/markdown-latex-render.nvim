@@ -12,6 +12,7 @@ local M = {}
 M._generate_image = function(latex, image_name, callback, opts)
   local img_dir = opts.img_dir or config.img_dir
   local cur_file_dir = debug.getinfo(1).source:match("@?(.*/)")
+  local venv_py_path = cur_file_dir .. "/image-generator/venv/bin/python"
   local py_script_path = cur_file_dir .. "/image-generator/latex-to-img.py"
   local args = {
     py_script_path,
@@ -39,7 +40,7 @@ M._generate_image = function(latex, image_name, callback, opts)
     table.insert(args, opts.width)
   end
   local newjob = job:new({
-    command = "python3",
+    command = venv_py_path,
     args = args,
     on_stdout = function(_, line)
       logger.debug("python script sdout {" .. line .. "}")

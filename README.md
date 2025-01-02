@@ -28,6 +28,8 @@ It's been a couple of years since I graduated from university and in that time I
 return {
     "Prometheus1400/markdown-latex-render.nvim",
     dependencies = { "3rd/image.nvim", "nvim-lua/plenary.nvim" },
+    build = "make install",
+    version = "*",
     opts = {}
 }
 ```
