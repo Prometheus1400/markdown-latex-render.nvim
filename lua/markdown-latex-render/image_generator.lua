@@ -39,6 +39,13 @@ M._generate_image = function(latex, image_name, callback, opts)
     table.insert(args, "-w")
     table.insert(args, opts.width)
   end
+  if config.render.usetex then
+    table.insert(args, "--usetex")
+  end
+  if config.render.preamble then
+    table.insert(args, "--preamble")
+    table.insert(args, config.render.preamble)
+  end
   local newjob = job:new({
     command = venv_py_path,
     args = args,

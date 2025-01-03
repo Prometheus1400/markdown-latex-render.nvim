@@ -8,6 +8,8 @@
 --- @field appearance? markdown-latex-render.ConfigRenderAppearance
 --- @field on_open? boolean wether to automatically render latex when loading the buffer
 --- @field on_write? "render"|"rerender"|nil wether to automatically render/rerender latex when writing the buffer or neither
+--- @field usetex? boolean wether to use latex install on your system or subset provided in matplotlib
+--- @field preamble? string preamble to use and setup packages when usetex is set to true
 ---
 --- @class markdown-latex-render.ConfigRenderAppearance
 --- @field bg? string hex background color, nil by default because generating a transparent image to match background
@@ -34,6 +36,10 @@ local config = {
     on_open = true,
     -- if you want to trigger some render functionality on write you can supply 'render' or 'rerender' here
     on_write = nil,
+    usetex = false,
+    preamble = [[
+    \usepackage{amsmath}
+    ]],
   },
 }
 

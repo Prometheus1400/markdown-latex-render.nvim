@@ -42,10 +42,6 @@ M._query_latex_in_buf = function(buf)
     for _, node, _, _ in query:iter_captures(tree:root(), 0) do
       local row1, _, row2, _ = ts.get_node_range(node)
       local text = ts.get_node_text(node, buf)
-      local text_lines = vim.split(text, "\n")
-      table.remove(text_lines, 1)
-      table.remove(text_lines)
-      text = table.concat(text_lines, "\n")
       table.insert(results, {
         pos = {
           r_start = row1,
