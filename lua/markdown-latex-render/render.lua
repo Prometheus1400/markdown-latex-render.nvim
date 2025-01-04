@@ -4,6 +4,7 @@ local image_cache = require("markdown-latex-render.image_cache")
 local image_generator = require("markdown-latex-render.image_generator")
 local logger = require("markdown-latex-render.logger")
 local query = require("markdown-latex-render.query")
+local utils = require("markdown-latex-render.utils")
 
 local M = {}
 
@@ -54,8 +55,9 @@ local handle_latex_query_results = function(buf, win, results)
     end
 
     -- heuristic for window width in inches
+    local col_width = utils.get_col_width_in_pixels()
     local width_in_cols = vim.api.nvim_win_get_width(win)
-    local width_in_inches = math.floor(width_in_cols / config.render.appearance.columns_per_inch)
+    local width_in_pixels = width_in_cols * col_width
 
     -- get the old image we need to unrender
     local old_images = image_cache._get_images_at_location(buf, row)
@@ -66,7 +68,7 @@ local handle_latex_query_results = function(buf, win, results)
           M._render_img(buf, win, key, img_path, row, old_images)
         end)
       end
-    end, { width = width_in_inches })
+    end, { width = width_in_pixels })
     ::continue::
   end
 end

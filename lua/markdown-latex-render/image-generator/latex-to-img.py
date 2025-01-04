@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 plt.rcParams["mathtext.fontset"] = "cm"
 plt.rcParams["font.weight"] = "bold"
-
+# px = 1 / plt.rcParams["figure.dpi"]
 
 def try_generate_image(
     latex: str,
@@ -20,7 +20,9 @@ def try_generate_image(
         # will dynamically create the height based on the number of lines to render
         # but width should be passed as an argument (width of window)
         fig = plt.figure(
-            figsize=(width, max(latex.count("\n") // 2.5, 1)), dpi=400, facecolor=bg
+            # figsize=(width * px, max(latex.count("\n"), 1) * 250 * px), facecolor=bg
+            figsize=(16, 3), facecolor=bg
+            # figsize=(1680*px, 200*px),dpi=100, facecolor=bg
         )
         fig.text(
             x=0.5,
@@ -54,14 +56,16 @@ def main():
     parser.add_argument(
         "-w",
         type=int,
-        help="width of image to generate in inches",
+        help="width of image to generate in pixels",
         required=False,
         default=4,
     )
     parser.add_argument(
         "--usetex", action="store_true", help="use latex toolchain", required=False
     )
-    parser.add_argument("--preamble", type=str, help="text packages to use", required=False)
+    parser.add_argument(
+        "--preamble", type=str, help="text packages to use", required=False
+    )
 
     args = parser.parse_args()
     latex: str = args.latex
@@ -72,13 +76,15 @@ def main():
     usetex: bool = args.usetex
     preamble: str = args.preamble
 
+    print("Here")
+
     if not usetex:
         latex = f"${latex.strip().strip("$").strip()}$"
         if latex.count("\n") > 0:
             print(f"could not generate image from latex: {latex}")
             exit(1)
     else:
-        latex=latex.strip("$").strip()
+        latex = latex.strip("$").strip()
         if r"\begin" not in latex:
             latex = f"${latex}$"
         else:
