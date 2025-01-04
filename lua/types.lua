@@ -2,9 +2,9 @@
 -- dependency available for tests does not seem that straightforward and with this I can more easily mock
 --- @class markdown-latex-render.ImageApiInterface interface for the image api mainly the from_file method
 --- @field from_file fun(path: string, opts?:table):markdown-latex-render.ImageInterface generates an ImageInterface type from an image file
----
+
 --- @class markdown-latex-render.ImageInterface
---- @field render fun(self: markdown-latex-render.ImageInterface, geometry?: ImageGeometry)
+--- @field render fun(self: markdown-latex-render.ImageInterface, geometry?: markdown-latex-render.ImageGeometry)
 --- @field id string
 --- @field path string
 --- @field geometry markdown-latex-render.ImageGeometry

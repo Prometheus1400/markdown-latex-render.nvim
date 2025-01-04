@@ -35,7 +35,7 @@ local config = {
     -- when first opening the buffer if the latex should get rendered automatically
     on_open = true,
     -- if you want to trigger some render functionality on write you can supply 'render' or 'rerender' here
-    on_write = nil,
+    on_write = "render",
     usetex = false,
     preamble = [[
     \usepackage{amsmath}

@@ -24,12 +24,14 @@ function M._render_img(buf, win, key, img_path, row, old_images)
   if not image then
     logger.error("failed to render image " .. key .. " from " .. img_path)
   else
-    image:render()
     if old_images then
       for _, old_image in ipairs(old_images) do
-        image_cache._clear_registered_image(buf, old_image.id)
+        image_cache._clear_registered_image(buf, old_image.id, 0)
       end
     end
+    vim.defer_fn(function()
+      image:render()
+    end, 10)
     image_cache.register_image(buf, key, image)
   end
 end
