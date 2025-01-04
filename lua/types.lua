@@ -20,8 +20,3 @@
 --- @class TSQueryResultsPos
 --- @field r_start integer row location where the query result starts
 --- @field r_end integer row location where the query result stops
-
---- @class GenerateImageOpts
---- @field img_dir? string path to directory where generated images are placed
---- @field sync? boolean execute synchronously or asynchronously
---- @field width? integer width of generated image in inches

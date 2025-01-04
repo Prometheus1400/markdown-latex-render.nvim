@@ -5,6 +5,11 @@ local utils = require("markdown-latex-render.utils")
 
 local M = {}
 
+--- @class GenerateImageOpts
+--- @field img_dir? string path to directory where generated images are placed
+--- @field sync? boolean execute synchronously or asynchronously
+--- @field width? integer width of generated image in pixels
+---
 --- @param latex string latex string to convert to image
 --- @param image_name string name of generated image
 --- @param callback fun(code: integer, img_path: string)
