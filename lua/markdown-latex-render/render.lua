@@ -21,6 +21,7 @@ function M._render_img(buf, win, key, img_path, row, old_images)
     buffer = buf,
     with_virtual_padding = true,
     y = row,
+    x = 0,
   })
   if not image then
     logger.error("failed to render image " .. key .. " from " .. img_path)
@@ -54,11 +55,6 @@ local handle_latex_query_results = function(buf, win, results)
       goto continue
     end
 
-    -- heuristic for window width in inches
-    local col_width = utils.get_col_width_in_pixels()
-    local width_in_cols = vim.api.nvim_win_get_width(win)
-    local width_in_pixels = width_in_cols * col_width
-
     -- get the old image we need to unrender
     local old_images = image_cache._get_images_at_location(buf, row)
     image_generator._generate_image(latex, name, function(code, img_path)
@@ -68,7 +64,7 @@ local handle_latex_query_results = function(buf, win, results)
           M._render_img(buf, win, key, img_path, row, old_images)
         end)
       end
-    end, { width = width_in_pixels })
+    end, {})
     ::continue::
   end
 end

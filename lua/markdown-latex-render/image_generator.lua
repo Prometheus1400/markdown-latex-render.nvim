@@ -5,25 +5,29 @@ local utils = require("markdown-latex-render.utils")
 
 local M = {}
 
---- @class GenerateImageOpts
+--- @class markdown-latex-render.GenerateImageOpts
 --- @field img_dir? string path to directory where generated images are placed
 --- @field sync? boolean execute synchronously or asynchronously
---- @field width? integer width of generated image in pixels
 ---
 --- @param latex string latex string to convert to image
 --- @param image_name string name of generated image
 --- @param callback fun(code: integer, img_path: string)
---- @param opts GenerateImageOpts
+--- @param opts markdown-latex-render.GenerateImageOpts
 M._generate_image = function(latex, image_name, callback, opts)
   local img_dir = opts.img_dir or config.img_dir
   local cur_file_dir = debug.getinfo(1).source:match("@?(.*/)")
   local venv_py_path = cur_file_dir .. "/image-generator/venv/bin/python"
   local py_script_path = cur_file_dir .. "/image-generator/latex-to-img.py"
+  print(config.render.appearance.fontsize)
   local args = {
     py_script_path,
-    latex,
+    "--ppi",
+    config.render.appearance.ppi,
+    "--fontsize",
+    config.render.appearance.fontsize,
     "-o",
     img_dir .. "/" .. image_name,
+    latex,
   }
   if config.render.appearance.bg then
     table.insert(args, "-bg")
@@ -40,16 +44,12 @@ M._generate_image = function(latex, image_name, callback, opts)
   if config.render.appearance.transparent then
     table.insert(args, "-t")
   end
-  if opts.width then
-    table.insert(args, "-w")
-    table.insert(args, opts.width)
-  end
   if config.render.usetex then
     table.insert(args, "--usetex")
   end
-  if config.render.preamble then
+  if config.render.tex_preamble then
     table.insert(args, "--preamble")
-    table.insert(args, config.render.preamble)
+    table.insert(args, config.render.tex_preamble)
   end
   local newjob = job:new({
     command = venv_py_path,

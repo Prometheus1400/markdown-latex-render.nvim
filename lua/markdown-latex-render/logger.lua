@@ -1,6 +1,13 @@
 local config = require("markdown-latex-render.config")
 local Logger = {}
 
+local log_level = {
+  DEBUG = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3,
+}
+
 --- @type "DEBUG" | "INFO" | "WARN" | "ERROR"
 Logger.level = config.log_level
 Logger.log_file = vim.fn.stdpath("log") .. "/markdown-latex-render.log"
@@ -25,7 +32,9 @@ end
 --- @param level "DEBUG" | "INFO" | "WARN" | "ERROR"
 --- @param msg string
 function Logger.log(level, msg)
-  write_to_file(format_message(level, msg))
+  if log_level[level] >= log_level[Logger.level] then
+    write_to_file(format_message(level, msg))
+  end
 end
 
 --- @param msg string

@@ -9,13 +9,15 @@
 --- @field on_open? boolean wether to automatically render latex when loading the buffer
 --- @field on_write? "render"|"rerender"|nil wether to automatically render/rerender latex when writing the buffer or neither
 --- @field usetex? boolean wether to use latex install on your system or subset provided in matplotlib
---- @field preamble? string preamble to use and setup packages when usetex is set to true
+--- @field tex_preamble? string preamble to use and setup packages when usetex is set to true
+--- @field position? "left" placement for generated latex
 ---
 --- @class markdown-latex-render.ConfigRenderAppearance
 --- @field bg? string hex background color, nil by default because generating a transparent image to match background
 --- @field fg? string hex foreground color
 --- @field transparent? boolean wether to make the generated image transparent, bg will override if set
---- @field columns_per_inch? integer number of columns per inch - used for sizing the generated latex png properly (ideally should configure as 18 only is a sensible default on MY system)
+--- @field fontsize? integer font size in latex image
+--- @field ppi? integer display's ppi (pixel per inch)
 
 --- @type markdown-latex-render.Config
 local config = {
@@ -25,21 +27,23 @@ local config = {
   log_level = "WARN",
   render = {
     appearance = {
-      -- will pick your normal fg text color can be any hex string color though
       fg = "default",
       bg = nil,
       transparent = true,
-      -- a bit janky but I need some way of getting the width of the window in some real unit not just columns (image generated with this width)
-      columns_per_inch = 18,
+      fontsize = 18,
+      ppi = 224,
     },
     -- when first opening the buffer if the latex should get rendered automatically
     on_open = true,
     -- if you want to trigger some render functionality on write you can supply 'render' or 'rerender' here
     on_write = "render",
+    -- wether to use latex install on your system, default false will use mathtex (not require latex on system)
     usetex = false,
-    preamble = [[
+    -- used for requiring other packages you want to use
+    tex_preamble = [[
     \usepackage{amsmath}
     ]],
+    position = "left", -- TODO: allow for centering image
   },
 }
 
