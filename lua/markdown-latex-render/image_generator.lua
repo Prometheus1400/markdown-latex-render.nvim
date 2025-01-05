@@ -18,7 +18,6 @@ M._generate_image = function(latex, image_name, callback, opts)
   local cur_file_dir = debug.getinfo(1).source:match("@?(.*/)")
   local venv_py_path = cur_file_dir .. "/image-generator/venv/bin/python"
   local py_script_path = cur_file_dir .. "/image-generator/latex-to-img.py"
-  print(config.render.appearance.fontsize)
   local args = {
     py_script_path,
     "--ppi",
