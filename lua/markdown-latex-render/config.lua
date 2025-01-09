@@ -7,6 +7,7 @@
 ---- @field display_error? boolean instead of just not rendering the latex it will display an image with error message
 --- @field appearance? markdown-latex-render.ConfigRenderAppearance
 --- @field on_open? boolean wether to automatically render latex when loading the buffer
+--- @field on_text_change? boolean wether to automatically render latex on text change events
 --- @field on_write? "render"|"rerender"|nil wether to automatically render/rerender latex when writing the buffer or neither
 --- @field usetex? boolean wether to use latex install on your system or subset provided in matplotlib
 --- @field tex_preamble? string preamble to use and setup packages when usetex is set to true

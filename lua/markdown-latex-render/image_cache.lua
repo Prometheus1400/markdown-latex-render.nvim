@@ -110,7 +110,7 @@ function M._delete_unused_by_location(buf, results)
   for key, image in pairs(buf_images[buf]) do
     local used = false
     for _, query_result in ipairs(results) do
-      if image.geometry.y == query_result.pos.r_end then
+      if image.geometry.y == query_result.line_end then
         used = true
         break
       end

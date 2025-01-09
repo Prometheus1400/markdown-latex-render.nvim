@@ -3,24 +3,23 @@ local image_api = require("markdown-latex-render.image_api")
 local image_cache = require("markdown-latex-render.image_cache")
 local image_generator = require("markdown-latex-render.image_generator")
 local logger = require("markdown-latex-render.logger")
-local query = require("markdown-latex-render.query")
-local utils = require("markdown-latex-render.utils")
+local ts = require("markdown-latex-render.treesitter")
 
 local M = {}
 
 --- @param buf integer
 --- @param win integer
 --- @param key string
---- @param img_path string
---- @param row integer
+--- @paeam img_path string
+--- @param line_num integer
 --- @param old_images? markdown-latex-render.ImageInterface[]
-function M._render_img(buf, win, key, img_path, row, old_images)
+function M._render_img(buf, win, key, img_path, line_num, old_images)
   local image = image_api.from_file(img_path, {
     id = key,
     window = win,
     buffer = buf,
     with_virtual_padding = true,
-    y = row,
+    y = line_num,
     x = 0,
   })
   if not image then
@@ -43,10 +42,10 @@ end
 --- @param results TSQueryResults[]
 local handle_latex_query_results = function(buf, win, results)
   for i, result in ipairs(results) do
-    local latex = result.latex
+    local latex = result.text
     local key = latex:gsub("%s+", "") .. "-" .. buf .. "-" .. i
     local name = key .. ".png"
-    local row = result.pos.r_end
+    local line_num = result.line_end
 
     -- if image with key already generated then don't need to rerender
     -- key comes from the latex so if it doesn't semantically change it
@@ -56,12 +55,12 @@ local handle_latex_query_results = function(buf, win, results)
     end
 
     -- get the old image we need to unrender
-    local old_images = image_cache._get_images_at_location(buf, row)
+    local old_images = image_cache._get_images_at_location(buf, line_num)
     image_generator._generate_image(latex, name, function(code, img_path)
       if code == 0 then
         logger.debug("trying to render image for key " .. key .. " at path " .. img_path)
         vim.schedule(function()
-          M._render_img(buf, win, key, img_path, row, old_images)
+          M._render_img(buf, win, key, img_path, line_num, old_images)
         end)
       end
     end, {})
@@ -83,24 +82,38 @@ function M._show_images_in_buf(buf)
   image_cache._rerender_images_in_buf(buf)
 end
 
+--- renders and rerenders changed expressions in buf
 --- @param buf? integer
 --- @param win? integer
-function M.render_buf(buf, win)
+--- @param only_visible_area? boolean
+function M.render_buf(buf, win, only_visible_area)
   buf = buf or vim.api.nvim_get_current_buf()
   win = win or vim.api.nvim_get_current_win()
+  only_visible_area = only_visible_area or false
 
-  local results = query._query_latex_in_buf(buf)
+  local results = nil
+  if only_visible_area then
+    local cur_line = vim.api.nvim_win_get_cursor(win)[1]
+    local lower_bound = math.max(cur_line - math.floor(vim.api.nvim_win_get_height(win) / 2), 0)
+    local upper_bound = cur_line + math.floor(vim.api.nvim_win_get_height(win) / 2)
+    results = ts._query_latex_in_buf(buf, lower_bound, upper_bound)
+  else
+    results = ts._query_latex_in_buf(buf)
+  end
+
   -- go through all the results and delete any images that are no longer applicable
   handle_latex_query_results(buf, win, results)
   image_cache._delete_unused_by_location(buf, results)
 end
 
+--- unrenders the entire buffer
 --- @param buf? integer
 function M.unrender_buf(buf)
   buf = buf or vim.api.nvim_get_current_buf()
   image_cache._clear_registered_images(buf)
 end
 
+--- rerenders the entire buffer
 --- @param buf? integer
 function M.rerender_buf(buf)
   buf = buf or vim.api.nvim_get_current_buf()
@@ -150,22 +163,22 @@ function M._setup_auto_commands()
     })
   end
 
-  -- vim.api.nvim_create_autocmd("TextChanged", {
-  --     group = vim.api.nvim_create_augroup("MarkdownLatexRenderTextChanged", { clear = true }),
-  --     pattern = "*.md",
-  --     callback = function(event)
-  --         -- if query._in_latex_section(event.buf, vim.api.nvim_get_current_win()) then
-  --             render_buf()
-  --         -- end
-  --     end,
-  -- })
+  vim.api.nvim_create_autocmd("TextChanged", {
+    group = vim.api.nvim_create_augroup("MarkdownLatexRenderTextChanged", { clear = true }),
+    pattern = "*.md",
+    callback = function(event)
+      local win = vim.api.nvim_get_current_win()
+      local res = ts._cursor_in_latex(event.buf, win)
+      print(res)
+      M.render_buf(event.buf, win, true)
+    end,
+  })
   -- vim.api.nvim_create_autocmd("InsertLeave", {
   --     group = vim.api.nvim_create_augroup("MarkdownLatexRenderInsertLeave", { clear = true }),
   --     pattern = "*.md",
   --     callback = function(event)
-  --         -- if query._in_latex_section(event.buf, vim.api.nvim_get_current_win()) then
-  --             render_buf()
-  --         -- end
+  --         local win = vim.api.nvim_get_current_win()
+  --         M.render_buf(event.buf, win, true)
   --     end,
   -- })
 
@@ -196,6 +209,7 @@ function M._setup_user_commands()
     if arg == "rerender" then
       M.rerender_buf(buf)
     elseif arg == "render" then
+      local win = vim.api.nvim_get_current_win()
       M.render_buf(buf)
     elseif arg == "unrender" then
       M.unrender_buf(buf)

@@ -14,9 +14,6 @@
 --- @field y integer
 
 --- @class TSQueryResults
---- @field pos TSQueryResultsPos
---- @field latex string
----
---- @class TSQueryResultsPos
---- @field r_start integer row location where the query result starts
---- @field r_end integer row location where the query result stops
+--- @field text string query result node text
+--- @field line_start integer row location where the query result starts
+--- @field line_end integer row location where the query result stops
