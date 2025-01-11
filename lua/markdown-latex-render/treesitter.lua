@@ -67,6 +67,25 @@ function M._query_latex_in_buf(buf, lower_bound, upper_bound)
   return results
 end
 
+function M._get_latex_nodes_in_buf(buf, lower_bound, upper_bound)
+  lower_bound = lower_bound or 0
+  upper_bound = upper_bound or (2 ^ 53 - 2)
+
+  local ok, parser = pcall(get_latex_parser, buf)
+  if not ok then
+    return {}
+  end
+
+  local results = {}
+  local trees = parser:trees()
+  for _, tree in ipairs(trees) do
+    local query = ts.query.parse("latex", query_string)
+    for _, node, _, _ in query:iter_captures(tree:root(), buf, lower_bound, upper_bound + 1) do
+      table.insert(results, node)
+    end
+  end
+end
+
 --- @param buf integer
 --- @param win integer
 --- @return boolean
